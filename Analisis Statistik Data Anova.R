@@ -1,0 +1,56 @@
+# Nama: Emilianus Satriawan Hadut/NIM: 2415091073/Kelas: Denpasar 1
+
+#menginstal packages yang dibutuhkan
+#install.packages("readxl")
+#install.packages("car")
+#install.packages("ggplot2")
+
+
+# 1. Memuat data dari file Excel
+library(readxl)
+library(car)
+library (ggplot2)
+
+dataanova=read_excel("c:/Users/emilianussatriawan/Pictures/simulated_anova_data.xlsx")
+dataanova
+
+# Pastikan kolom 'Score' dan 'Group' ada
+str(dataanova)  # Periksa struktur data untuk memastikan kolom yang tepat
+
+# 2. Uji Asumsi
+# Homogenitas variansi (Levene Test)
+levene_test <- leveneTest(Score ~ Group, data = dataanova)
+print("Uji Levene untuk Homogenitas Variansi")
+print(levene_test)
+
+# Normalitas residual (Shapiro-Wilk Test)
+anova_model <- aov(Score ~ Group, data = dataanova)
+shapiro_test <- shapiro.test(residuals(anova_model))
+print("Uji Shapiro-Wilk untuk Normalitas Residual")
+print(shapiro_test)
+
+# Outlier check (Boxplot)
+boxplot(dataanova$Score ~ dataanova$Group, 
+        main = "Boxplot untuk Identifikasi Outlier",
+        xlab = "Kelompok",
+        ylab = "Skor",
+        col = c("lightblue", "lightgreen", "lightpink"))
+
+# 3. Analisis ANOVA
+anova_result <- summary(anova_model)
+print("Hasil Analisis ANOVA")
+print(anova_result)
+
+# 4. Visualisasi
+# a) Boxplot untuk distribusi data
+boxplot(dataanova$Score ~ dataanova$Group,
+        main = "Boxplot Skor Berdasarkan Kelompok",
+        xlab = "Kelompok",
+        ylab = "Skor",
+        col = c("lightblue", "lightgreen", "lightpink"))
+
+# b) Visualisasi hasil ANOVA dengan Tukey HSD
+tukey_result <- TukeyHSD(anova_model)
+plot(tukey_result)
+
+
